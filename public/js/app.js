@@ -1893,19 +1893,26 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     uploadFile: function uploadFile() {
-      for (var i = 0; i < this.files.length; i++) {
+      var _this = this;
+
+      var _loop = function _loop(i) {
         var fd = new FormData();
-        fd.append('file', this.files[i], this.files[i].name);
+        fd.append('file', _this.files[i], _this.files[i].name);
         fd.append('_token', document.querySelector('meta[name=csrf-token]').content);
         axios.post('/file-upload', fd, {
           onUploadProgress: function onUploadProgress(uploadEvent) {
             var mydata = Math.round(uploadEvent.loaded / uploadEvent.total) * 100;
+            _this.showfiles.file_progress[i] = mydata;
           }
         }).then(function (res) {
           console.log(res.data);
         })["catch"](function (e) {
           console.log(e);
         });
+      };
+
+      for (var i = 0; i < this.files.length; i++) {
+        _loop(i);
       }
     }
   }
@@ -37224,35 +37231,51 @@ var render = function() {
       "div",
       { staticClass: "form-group" },
       _vm._l(_vm.showfiles.file_name, function(file, i) {
-        return _c("div", { key: i, staticClass: "row" }, [
-          _c("div", { staticClass: "col-md-6" }, [
+        return _c(
+          "div",
+          {
+            key: i,
+            staticClass: "row",
+            staticStyle: {
+              "border-bottom": "1px dotted #cfcfcf",
+              margin: "2px"
+            }
+          },
+          [
             _c(
               "div",
-              { staticClass: "progress", staticStyle: { height: "5px" } },
+              { staticClass: "col-md-6", staticStyle: { "margin-top": "7px" } },
               [
-                _c("div", {
-                  staticClass: "progress-bar",
-                  style: "width:" + _vm.showfiles.file_progress[i] + "%;",
-                  attrs: {
-                    role: "progressbar",
-                    "aria-valuenow": _vm.showfiles.file_progress[i],
-                    "aria-valuemin": "0",
-                    "aria-valuemax": "100"
-                  }
-                })
+                _c(
+                  "div",
+                  { staticClass: "progress", staticStyle: { height: "10px" } },
+                  [
+                    _c("div", {
+                      staticClass: "progress-bar",
+                      style: "width:" + _vm.showfiles.file_progress[i] + "%;",
+                      attrs: {
+                        role: "progressbar",
+                        "aria-valuenow": _vm.showfiles.file_progress[i],
+                        "aria-valuemin": "0",
+                        "aria-valuemax": "100"
+                      }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.showfiles.file_progress[i] > 0
+                  ? _c("span", [
+                      _vm._v(_vm._s(_vm.showfiles.file_progress[i]) + "%")
+                    ])
+                  : _vm._e()
               ]
             ),
-            _vm._v(
-              "\n                " +
-                _vm._s(_vm.showfiles.file_progress[i]) +
-                "%\n            "
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-6" }, [
-            _vm._v("\n                " + _vm._s(file) + "\n            ")
-          ])
-        ])
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-6" }, [
+              _vm._v("\n                " + _vm._s(file) + "\n            ")
+            ])
+          ]
+        )
       }),
       0
     ),

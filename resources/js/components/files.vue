@@ -7,12 +7,12 @@
             <input type="file" class="form-control" id="file" @change="onFileChange" multiple>
         </div>
         <div class="form-group">
-            <div class="row" v-for="(file,i) in showfiles.file_name" :key="i">
-                <div class="col-md-6">
-                    <div class="progress" style="height:5px">
+            <div class="row" v-for="(file,i) in showfiles.file_name" :key="i" style="border-bottom: 1px dotted #cfcfcf;margin:2px;">
+                <div class="col-md-6" style="margin-top: 7px;">
+                    <div class="progress" style="height:10px">
                         <div class="progress-bar" role="progressbar" :style="'width:' +showfiles.file_progress[i]+ '%;'" :aria-valuenow="showfiles.file_progress[i]" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{showfiles.file_progress[i]}}%
+                    <span v-if="showfiles.file_progress[i]>0">{{showfiles.file_progress[i]}}%</span>
                 </div>
                 <div class="col-md-6">
                     {{file}}
@@ -58,6 +58,7 @@
                     axios.post('/file-upload',fd,{
                         onUploadProgress:uploadEvent=>{
                             let mydata = Math.round(uploadEvent.loaded/uploadEvent.total)*100;
+                            this.showfiles.file_progress[i]=mydata;
                         }
                     })
                         .then(res=>{
